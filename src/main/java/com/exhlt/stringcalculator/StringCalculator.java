@@ -13,12 +13,11 @@ public class StringCalculator {
     private static final Pattern CUSTOM_DELIMETER = Pattern.compile("//(.*)\n(.*)");
 
     public int add(String numbers) throws Exception {
-        if (numbers.isBlank() || numbers.isEmpty()) {
+        if (numbers.isEmpty()) {
             return 0;
         }
         List<Integer> list = null;
         if (!numbers.trim().isEmpty()) {
-
             if (numbers.startsWith("//")) {
                 list = splitDifferentDelimiters(numbers);
                 checkNegativeNumber(list);
@@ -43,7 +42,7 @@ public class StringCalculator {
             String[] strings = restOfNumb.split(Pattern.quote(customD));
             return convertNumberArrayToList(strings);
         } else {
-            throw new IllegalArgumentException("Unsupported format" + numbers);
+            throw new StringIndexOutOfBoundsException("Unsupported format" + numbers);
         }
     }
 
@@ -54,7 +53,7 @@ public class StringCalculator {
 
     private void checkNegativeNumber(List<Integer> numbers) throws Exception {
         if (numbers.stream().anyMatch(i -> i < 0)) {
-            throw new Exception("Negatives: " + numbers.stream().filter(j -> j < 0).map(String::valueOf).collect(Collectors.joining(",")));
+            throw new StringIndexOutOfBoundsException("Negatives: " + numbers.stream().filter(j -> j < 0).map(String::valueOf).collect(Collectors.joining(",")));
         }
     }
 
