@@ -2,7 +2,7 @@
 
 String Calculator Kata
 
-Create a simple String calculator with a method signature:
+Create a simple String calculator with a method signature::\
 ———————————————
 #int Add(string numbers):\
 ———————————————\
