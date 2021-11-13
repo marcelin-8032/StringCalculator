@@ -1,5 +1,7 @@
 package com.exhlt.stringcalculator;
 
+import com.exhlt.stringcalculator.exception.StringCalculatorException;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,27 +14,38 @@ public class StringCalculator {
 
     private static final Pattern CUSTOM_DELIMETER = Pattern.compile("//(.*)\n(.*)");
 
-    public int add(String numbers) throws Exception {
+    public int add(String numbers) throws StringCalculatorException {
         if (numbers.isEmpty()) {
             return 0;
         }
-        List<Integer> list = null;
         if (!numbers.trim().isEmpty()) {
             if (numbers.startsWith("//")) {
-                list = splitDifferentDelimiters(numbers);
+                List<Integer> list = splitDifferentDelimiters(numbers);
                 checkNegativeNumber(list);
                 return sum(list);
             } else {
                 String[] array = numbers.split(DEFAULT_DELIMETER);
-                list = convertNumberArrayToList(array);
+                List<Integer> list = convertNumberArrayToList(array);
                 checkNegativeNumber(list);
                 return sum(list);
             }
-
         }
-        return sum(list);
+        return -1;
     }
 
+    private List<Integer> convertNumberArrayToList(String[] array) {
+        return Stream.of(array).map(Integer::parseInt).collect(Collectors.toList());
+    }
+
+    private int sum(List<Integer> list) {
+        return list.stream().filter(i -> i <= 1000).reduce(0, (x, y) -> x + y);
+    }
+
+    private void checkNegativeNumber(List<Integer> list) throws StringCalculatorException {
+        if (list.stream().anyMatch(i -> i < 0)) {
+            throw new StringCalculatorException("Negatives: " + list.stream().filter(j -> j < 0).map(String::valueOf).collect(Collectors.joining(",")));
+        }
+    }
 
     private List<Integer> splitDifferentDelimiters(String numbers) {
         Matcher matcher = CUSTOM_DELIMETER.matcher(numbers);
@@ -44,21 +57,6 @@ public class StringCalculator {
         } else {
             throw new StringIndexOutOfBoundsException("Unsupported format" + numbers);
         }
-    }
-
-    private List<Integer> convertNumberArrayToList(String[] strings) {
-        List<Integer> list = Stream.of(strings).map(Integer::parseInt).collect(Collectors.toList());
-        return list;
-    }
-
-    private void checkNegativeNumber(List<Integer> numbers) throws Exception {
-        if (numbers.stream().anyMatch(i -> i < 0)) {
-            throw new StringIndexOutOfBoundsException("Negatives: " + numbers.stream().filter(j -> j < 0).map(String::valueOf).collect(Collectors.joining(",")));
-        }
-    }
-
-    private int sum(List<Integer> numbers) {
-        return numbers.stream().filter(i -> i <= 1000).reduce(0, (x, y) -> x + y);
     }
 
 }
